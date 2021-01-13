@@ -1,7 +1,8 @@
 import os, argparse
 import pandas as pd
 import numpy as np
-from sklearn.model_selection import GroupKFold, StratifiedKFold
+#from sklearn.model_selection import GroupKFold, StratifiedKFold
+from sklearn.model_selection import StratifiedKFold
 import matplotlib.pyplot as plt
 from tqdm import tqdm
 import tensorflow as tf
@@ -268,7 +269,7 @@ if __name__ == '__main__':
 
     pred = np.zeros((len(test)))
     pred2 = np.zeros((len(test2)))
-    gkf = StratifiedKFold(n_splits=N_FOLD).split(X=train[input_categories], y=train[output_categories])
+    gkf = StratifiedKFold(n_splits=N_FOLD, shuffle=True, random_state=1000).split(X=train[input_categories], y=train[output_categories])
 
     for fold, (train_idx, valid_idx) in enumerate(gkf):
         train_inputs = [inputs[i][train_idx] for i in range(len(inputs))]
@@ -301,7 +302,7 @@ if __name__ == '__main__':
     best_threshold = 0
     for i in range(N_FOLD):
         temp_pred = (np.array(pred) >= i).astype('int')
-        print("verb metaphor preference parameter alpha: {:d}".format(i/N_FOLD))
+        print("verb metaphor preference parameter alpha: {:.4f}".format(i/N_FOLD))
         print("verb accuracy: {:.4f}".format(accuracy_score(test.label, temp_pred)))
         print("verb precision: {:.4f}".format(precision_score(test.label, temp_pred)))
         print("verb recall: {:.4f}".format(recall_score(test.label, temp_pred)))
@@ -311,7 +312,7 @@ if __name__ == '__main__':
             best_pred = temp_pred
             best_threshold = i
 
-    print("best verb metaphor preference parameter alpha: {:d}".format(best_threshold/N_FOLD))
+    print("best verb metaphor preference parameter alpha: {:.4f}".format(best_threshold/N_FOLD))
     print("best verb accuracy: {:.4f}".format(accuracy_score(test.label, best_pred)))
     print("best verb precision: {:.4f}".format(precision_score(test.label, best_pred)))
     print("best verb recall: {:.4f}".format(recall_score(test.label, best_pred)))
@@ -322,7 +323,7 @@ if __name__ == '__main__':
     best_threshold2 = 0
     for i in range(N_FOLD):
         temp_pred2 = (np.array(pred2) >= i).astype('int')
-        print("allpos metaphor preference parameter alpha: {:d}".format(i/N_FOLD))
+        print("allpos metaphor preference parameter alpha: {:.4f}".format(i/N_FOLD))
         print("allpos accuracy: {:.4f}".format(accuracy_score(test2.label, temp_pred2)))
         print("allpos precision: {:.4f}".format(precision_score(test2.label, temp_pred2)))
         print("allpos recall: {:.4f}".format(recall_score(test2.label, temp_pred2)))
@@ -332,7 +333,7 @@ if __name__ == '__main__':
             best_pred2 = temp_pred2
             best_threshold2 = i
 
-    print("best allpos metaphor preference parameter alpha: {:d}".format(best_threshold2/N_FOLD))
+    print("best allpos metaphor preference parameter alpha: {:.4f}".format(best_threshold2/N_FOLD))
     print("best allpos accuracy: {:.4f}".format(accuracy_score(test2.label, best_pred2)))
     print("best allpos precision: {:.4f}".format(precision_score(test2.label, best_pred2)))
     print("best allpos recall: {:.4f}".format(recall_score(test2.label, best_pred2)))
